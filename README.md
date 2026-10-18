@@ -28,7 +28,7 @@ The UI sidebar has **Fake calls / Fake email / Fake search** toggles. Calls and 
 | [docs/ws4-email.md](docs/ws4-email.md) | Isaac (T4) | Resend email (availability + transcripts), extraction, deck |
 | [docs/integration-and-demo.md](docs/integration-and-demo.md) | Everyone | Phase timeline, integration order, test matrix, demo runbook, open questions |
 
-##Repo layout
+## Repo layout
 
 ```
 config.py          # all env settings, single source of truth
