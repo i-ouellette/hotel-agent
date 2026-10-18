@@ -1,8 +1,44 @@
-# Team 15 — One-Shot Hotel Availability Agent (TechTO Fast & Frugal)
+# 🏨 Hotel Spot
 
-Each teammate owns one workstream doc.
+**One prompt in, one email out.** Type something like *"cheapest hotel in Toronto on Nov 2 for 2 people"*. Hotel Spot finds the cheapest hotels nearby, has an AI voice agent **phone the 3 cheapest at the same time**, and emails you the cheapest one that actually has a room. The email includes the price, the call transcript and the call recording.
 
-## Run it
+The agent never books anything. It only asks about availability and price.
+
+Built in one day by a team of 4 at the **TechTO "Fast & Frugal" hackathon** (Oct 2026). 📊 [Pitch deck](Hotel_Spot_Deck.pdf)
+
+<!-- Optional: add a screenshot of the Streamlit UI or the result email here -->
+<!-- ![Hotel Spot UI](docs/screenshot.png) -->
+
+## How it works
+
+```
+prompt ─► parse (regex) ─► search (SerpApi) ─► 3 parallel calls (ElevenLabs + Twilio) ─► extract answers ─► one email
+```
+
+1. **Parse** the city, dates and guests with regex, using no LLM. Backboard is only a fallback for unusual prompts.
+2. **Search** Google Hotels through SerpApi, filter to within 20 km of the city, and look up phone numbers in parallel.
+3. **Call** the 3 cheapest hotels **at the same time**. The voice agent handles phone menus, hold music and voicemail.
+4. **Extract** each answer, cheapest source first: the agent's own tool call, then a regex over the transcript, then an LLM only as a last resort.
+5. **Email** the cheapest hotel with a room, along with its transcript and an MP3 of the call.
+
+## Results
+
+- **~2:45 end to end** on a real run (San Diego, 3 nights), from prompt to email in the inbox
+- **~1,900 LLM tokens (~$0.05)** for all 3 calls. Parsing, search, extraction and email use **0 tokens** on a normal run.
+
+## My role
+
+I owned the **results and email layer**:
+- **`tool_server.py`**: a thread-safe endpoint that records the voice agent's live `record_availability` tool calls from 3 simultaneous calls
+- **`extractor.py`**: a zero-token regex extractor that reads availability and spoken prices ("thirty-four a night") from transcripts when the tool call doesn't arrive
+- **`email_service.py`**: builds the report email, validates it against the organizers' required format, attaches the call recording, and sends through Resend with a Gmail SMTP fallback
+
+Teammates: Richard (search + UI), Zach (prompt parsing + LLM fallback), Jordan (voice agent).
+
+**Stack:** Python · ElevenLabs · Twilio · SerpApi · Backboard · Resend · Streamlit · pytest
+
+
+## Run it locally
 
 ```bash
 git pull origin main
