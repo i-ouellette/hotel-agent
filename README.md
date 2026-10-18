@@ -24,7 +24,7 @@ prompt ─► parse (regex) ─► search (SerpApi) ─► 3 parallel calls (Ele
 ## Results
 
 - **~2:45 end to end** on a real run (San Diego, 3 nights), from prompt to email in the inbox
-- **~1,900 LLM tokens (~$0.05)** for all 3 calls. Parsing, search, extraction and email use **0 tokens** on a normal run.
+- **about1,900 LLM tokens (~$0.05)** for all 3 calls. Parsing, search, extraction and email use **0 tokens** on a normal run.
 
 ## My role
 
